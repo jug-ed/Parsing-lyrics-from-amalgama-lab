@@ -1,5 +1,6 @@
 import requests, string
 from bs4 import BeautifulSoup
+from threading import Thread
 
 class Row:
 	def __init__(self, origin, translate):
@@ -57,6 +58,12 @@ def write_txt_file(name, rows):
 	for row in rows:
 		f.write(f'{row.origin}\n{row.translate}\n' + '\n')
 	f.close()
+	print(f"Saved:    {name}")
+
+
+def get_n_save(a, song):
+	song_text = get_text_by_urls(f'{a}/{song}')
+	write_txt_file(f'songs/{song_text[0]}', song_text[1])
 
 
 
@@ -67,5 +74,6 @@ if __name__ == "__main__":
 	for ltr in rng_list:
 		for a in get_artists_by_letter(ltr):
 			for song in get_songs_by_urls(a):
-				song_text = get_text_by_urls(f'{a}/{song}')
-				write_txt_file(f'songs/{song_text[0]}', song_text[1])
+				Thread(target=get_n_save, args=(a, song)).start()
+				#song_text = get_text_by_urls(f'{a}/{song}')
+				#write_txt_file(f'songtst/{song_text[0]}', song_text[1])
